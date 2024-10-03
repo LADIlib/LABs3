@@ -5,9 +5,15 @@
 
 %%
 
-1[01]+        { if (strstr(yytext, "00")) printf("%s\n", yytext); }
+1[01]+          { 
+                    if (strstr(yytext, "00"))
+                    {
+                        printf("%s\n", yytext); 
+                    }
+                }
 
-[ \t\n]       { /* Nothing*/ }
+[ \t\n]+        { /* Nothing*/ }
+[^01 \t\n]+     { /* Nothing*/ }
 
 %%
 

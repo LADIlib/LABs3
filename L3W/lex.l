@@ -2,35 +2,31 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-
-void check_vowels_order(const char* word);
 %}
 
 %%
 
-[a-zA-Z]+    { check_vowels_order(yytext); }
+[a-zA-Z]+   {
+                //const char* vowels = "aeiou";
+                const char* vowels = "aeiouAEIOU";
+                char prev_vowel = '\0';
+                
+                for (int i = 0; yytext[i] != '\0'; ++i) {
+                    //if (strchr(vowels, tolower(yytext[i]))) {
+                    if (strchr(vowels, yytext[i])) {
+                        if (prev_vowel != '\0' && yytext[i] < prev_vowel) {
+                            return;
+                        }
+                        prev_vowel = yytext[i];
+                    }
+                }
 
-[ \t\n]      { /* Nothing*/ }
+                printf("%s\n", yytext);
+            }
+
+[ \t\n]     { /* Nothing*/ }
 
 %%
-
-void check_vowels_order(const char* word) {
-    //const char* vowels = "aeiou";
-    const char* vowels = "aeiouAEIOU";
-    char prev_vowel = '\0';
-    
-    for (int i = 0; word[i] != '\0'; ++i) {
-        //if (strchr(vowels, tolower(word[i]))) {
-		if (strchr(vowels, word[i])) {
-            if (prev_vowel != '\0' && word[i] < prev_vowel) {
-                return;
-            }
-            prev_vowel = word[i];
-        }
-    }
-
-    printf("%s\n", word);
-}
 
 int main() {
     yylex();
