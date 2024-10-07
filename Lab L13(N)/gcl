@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Проверяем, передано ли имя файла как аргумент
+if [ "$#" -lt 1 ]; then
+    echo "Использование: $0 <имя_файла.l> [<опция_компилятора>] [<имя_выходного_файла>]"
+    exit 1
+fi
+
+# Название файла для поиска и компиляции
+filename=$1
+compiler_option="${3:--Wall}" #
+output_file="${2:-output}"
+
+# Проверяем, существует ли файл
+if [[ -f "$filename" ]]; then
+    # Генерируем файл lex.yy.c из flex файла
+    flex "$filename"
+
+    # Компилируем файл lex.yy.c
+    gcc -o "$output_file" lex.yy.c -lfl $compiler_option
+
+    # Проверяем успешность компиляции
+    if [ $? -eq 0 ]; then
+        echo "Компиляция успешно завершена. Запустите ./$output_file для выполнения."
+    else
+        echo "Ошибка компиляции."
+    fi
+
+    # Удаляем временный файл
+    rm lex.yy.c
+else
+    echo "Файл $filename не найден."
+    exit 1
+fi
+
